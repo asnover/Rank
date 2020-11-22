@@ -1,0 +1,7 @@
+name: Rank
+version: 1.0
+main: me.snover.rank.Main
+
+commands:
+  rank:
+    description: Allows the user to modify a player's rank
