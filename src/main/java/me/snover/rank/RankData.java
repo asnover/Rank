@@ -1,36 +1,49 @@
 package me.snover.rank;
 
-import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+import java.io.File;
+import java.io.IOException;
 
 public class RankData {
 
-    public static YamlConfiguration rankFile;
+    private static FileConfiguration rankFile;
 
     public static Rank getPlayerRank(Player player) {
-        return Rank.DEFAULT;
+        String uuid = player.getUniqueId().toString();
+        int rankID = Integer.parseInt((String) getRankFile().get(uuid));
+        for(Rank rank : Rank.values()) {
+            if(rank.getRankID() == rankID) {
+                return rank;
+            }
+        }
+
+        return null;
     }
 
-    public static Rank getPlayerRank(String name) {
-        return Rank.DEFAULT;
+    public static void setPlayerRank(Player player, Rank rank) {
+        String uuid = player.getUniqueId().toString();
+        getRankFile().set(uuid, rank.getRankID());
     }
 
-    public static Rank getPlayerRank(UUID uuid) {
-        return Rank.DEFAULT;
+    public static FileConfiguration getRankFile() {
+        return rankFile;
     }
 
-    public static void setPlayerRank(UUID uuid) {
-
-    }
-
-    public static void setPlayerRank(Player player) {
-        setPlayerRank(player.getUniqueId());
-    }
-
-    public static void setPlayerRank(String name) {
-        setPlayerRank(Bukkit.getPlayer(name).getUniqueId());
+    public static void loadConfigFile() {
+        File file = new File(Main.getPlugin().getDataFolder(), "rank.yml");
+        if(!file.exists()) {
+            file.mkdirs();
+            Main.getPlugin().saveResource("rank.yml", false);
+        }
+        rankFile = new YamlConfiguration();
+        try {
+            rankFile.load(file);
+        } catch (IOException | InvalidConfigurationException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -2,7 +2,9 @@ package me.snover.rank;
 
 import me.snover.rank.commands.RankCommand;
 import me.snover.rank.events.Events;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -11,19 +13,13 @@ import java.nio.file.Files;
 
 public class Main extends JavaPlugin {
 
+    private static Plugin plugin;
+
     @Override
     public void onEnable() {
-        File f = new File("plugins/rank/rank.yml");
-        if(!f.exists()) {
-            try {
-                Files.createDirectory(new File("plugins/rank").toPath());
-                Files.createFile(f.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        this.plugin = this;
 
-        RankData.rankFile = YamlConfiguration.loadConfiguration(f);
+        RankData.loadConfigFile();
 
         this.getCommand("rank").setExecutor(new RankCommand());
         this.getServer().getPluginManager().registerEvents(new Events(), this);
@@ -32,5 +28,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+    }
+
+    public static Plugin getPlugin() {
+        return plugin;
     }
 }

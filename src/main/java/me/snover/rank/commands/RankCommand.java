@@ -2,6 +2,7 @@ package me.snover.rank.commands;
 
 import me.snover.rank.LoggedUsers;
 import me.snover.rank.Rank;
+import me.snover.rank.RankData;
 import me.snover.rank.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -26,12 +27,41 @@ public class RankCommand implements CommandExecutor {
         }
 
         if(args[0] == "set") {
-            UUID uuid = Bukkit.getPlayer(args[1]).getUniqueId();
+            Player player = Bukkit.getPlayer(args[1]);
             String rankArg = args[2];
+            try {
+                int rankID = Integer.parseInt(rankArg);
+                for(Rank rank : Rank.values()) {
+                    if(rank.getRankID() == rankID) {
+                        RankData.setPlayerRank(player, rank);
+                        commandSender.sendMessage("Player rank set to: " + rank.getDisplayName());
+                        return true;
+                    }
+                }
 
+                commandSender.sendMessage("§4This is not the rank you are looking for!");
+            } catch (NumberFormatException e) {
+                for (Rank rank : Rank.values()) {
+                    if(rank.getName().equalsIgnoreCase(rankArg)) {
+                        RankData.setPlayerRank(player, rank);
+                        commandSender.sendMessage("Player rank set to: " + rank.getDisplayName());
+                        return true;
+                    }
+                }
+
+                commandSender.sendMessage("§4This is not the rank you are looking for!");
+                return true;
+            }
+
+            commandSender.sendMessage("/rank set <player> <rank name/rank ID>");
+            return true;
         }
 
-        commandSender.sendMessage("/rank set <player> <rank name OR rank ID>");
+        if(args[0] == "status") {
+            Player player = Bukkit.getPlayer(args[1]);
+            commandSender.sendMessage("Player rank is: " + RankData.getPlayerRank(player).getDisplayName());
+            return true;
+        }
         return true;
     }
 }

@@ -14,10 +14,7 @@ public class Events implements Listener {
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        final String playerName = player.getName();
-
-        User user = new User(RankData.getPlayerRank(player.getUniqueId()), player);
-
+        User user = new User(RankData.getPlayerRank(player), player);
         LoggedUsers.addUser(user);
     }
 }
