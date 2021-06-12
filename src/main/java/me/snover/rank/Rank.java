@@ -19,6 +19,13 @@ public enum Rank {
         return this.rankID;
     }
 
+    public static int getRankID(String rankName) {
+        for(Rank rank : Rank.values()) {
+            if(rank.getName().equalsIgnoreCase(rank.getName())) return rank.getRankID();
+        }
+        return 0;
+    }
+
     public String getName() {
         return this.name;
     }

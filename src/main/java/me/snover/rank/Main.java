@@ -25,11 +25,6 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Events(), this);
     }
 
-    @Override
-    public void onDisable() {
-        super.onDisable();
-    }
-
     public static Plugin getPlugin() {
         return plugin;
     }

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class RankData {
 
@@ -14,13 +15,16 @@ public class RankData {
 
     public static Rank getPlayerRank(Player player) {
         String uuid = player.getUniqueId().toString();
-        int rankID = Integer.parseInt((String) getRankFile().get(uuid));
-        for(Rank rank : Rank.values()) {
-            if(rank.getRankID() == rankID) {
-                return rank;
-            }
+        int rankID = Rank.DEFAULT.getRankID();
+        try {
+            rankID = Integer.parseInt(String.valueOf(getRankFile().get(uuid)));
+        } catch (NumberFormatException e) {
+            Main.getPlugin().getLogger().log(Level.INFO, "Could not parse for player's rank... Setting rank to default");
+            setPlayerRank(player, Rank.DEFAULT);
         }
-
+        for(Rank rank : Rank.values()) {
+            if(rank.getRankID() == rankID) return rank;
+        }
         return null;
     }
 
@@ -34,7 +38,7 @@ public class RankData {
     }
 
     public static void loadConfigFile() {
-        File file = new File(Main.getPlugin().getDataFolder(), "rank.yml");
+        File file = new File(Main.getPlugin().getDataFolder() + "/rank.yml");
         if(!file.exists()) {
             file.mkdirs();
             Main.getPlugin().saveResource("rank.yml", false);

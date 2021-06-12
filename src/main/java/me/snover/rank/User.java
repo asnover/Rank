@@ -22,6 +22,10 @@ public class User {
     }
 
     public Rank getRank() {
+        if(this.rank == null) {
+            RankData.setPlayerRank(getPlayer(), Rank.DEFAULT);
+            this.rank = Rank.DEFAULT;
+        }
         return this.rank;
     }
 
